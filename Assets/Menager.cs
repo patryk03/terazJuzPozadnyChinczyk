@@ -10,7 +10,10 @@ public class Menager : MonoBehaviour
     public budowaczPlytek plansza;
     public move move;
     public List<GameObject> createdObjects;
-    public GameObject kolumna;
+    public GameObject kolumna1;
+    public GameObject kolumna2;
+    public GameObject kolumna3;
+    public GameObject kolumna4;
     private UnityEngine.Quaternion rotation;
     public GameObject prefab;
     public GameObject pusty;
@@ -29,7 +32,7 @@ public class Menager : MonoBehaviour
 
         rotation = transform.rotation;
         List<List<GameObject>> listaWszystkiego = new List<List<GameObject>>();
-        createdObjects = plansza.buduj_plansze(prefab, pusty, 0, kolumna);
+        createdObjects = plansza.buduj_plansze(prefab, pusty, 0, pusty);
         for (int i = 1; i < 5; i++)
         {
             List<GameObject> obiekty = new List<GameObject>();
@@ -70,9 +73,11 @@ public class Menager : MonoBehaviour
         public List<GameObject> ListaMiejsc { get; private set; }
         public List<Ludzik> Ludziki { get; private set; }
 
+        public Material[] KoloryLudzikow;
 
-        public Player(Material kolor, List<GameObject> listaMiejsc, List<Ludzik> ludziki)
+        public Player(Material kolor, List<GameObject> listaMiejsc, List<Ludzik> ludziki, Material[] koloryLudzikow)
         {
+            this.KoloryLudzikow = koloryLudzikow;
             this.Kolor = kolor;
             this.ListaMiejsc = listaMiejsc;
             this.Ludziki = ludziki;
@@ -89,45 +94,73 @@ public class Menager : MonoBehaviour
             listaMiejsc = myList[i];
             if (i == 0)
             {
-                ludziki = tworzycielLudzikow(yellow, myList[i]);
-                Player player = new Player(yellow, listaMiejsc, ludziki);
+                ludziki = tworzycielLudzikow(yellow, myList[i], i);
+                GameObject cialko = ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
+                Material[] mats = cialko.GetComponent<Renderer>().materials;
+                Player player = new Player(yellow, listaMiejsc, ludziki, mats);
                 stworzeniLudzie.Add(player);
             }
             else if (i == 1)
             {
-                ludziki = tworzycielLudzikow(red, myList[i]);
-                Player player = new Player(red, listaMiejsc, ludziki);
+                ludziki = tworzycielLudzikow(red, myList[i], i);
+                GameObject cialko = ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
+                Material[] mats = cialko.GetComponent<Renderer>().materials;
+                Player player = new Player(red, listaMiejsc, ludziki, mats);
                 stworzeniLudzie.Add(player);
             }
             else if (i == 2)
             {
-                ludziki = tworzycielLudzikow(blue, myList[i]);
-                Player player = new Player(blue, listaMiejsc, ludziki);
+                ludziki = tworzycielLudzikow(blue, myList[i], i);
+                GameObject cialko = ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
+                Material[] mats = cialko.GetComponent<Renderer>().materials;
+                Player player = new Player(blue, listaMiejsc, ludziki, mats);
                 stworzeniLudzie.Add(player);
             }
             else
             {
-                ludziki = tworzycielLudzikow(green, myList[i]);
-                Player player = new Player(green, listaMiejsc, ludziki);
+                ludziki = tworzycielLudzikow(green, myList[i], i);
+                GameObject cialko = ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
+                Material[] mats = cialko.GetComponent<Renderer>().materials;
+                Player player = new Player(green, listaMiejsc, ludziki, mats);
                 stworzeniLudzie.Add(player);
             }
 
         }
         return stworzeniLudzie;
     }
-    public List<Ludzik> tworzycielLudzikow(Material kolor, List<GameObject> list)
+    public List<Ludzik> tworzycielLudzikow(Material kolor, List<GameObject> list, int u)
     {
+        bool czyZbity = true;
         int x = 44;
         List<Ludzik> stworzonePostacie = new List<Ludzik>();
         UnityEngine.Vector3 startPosition;
         for (int i = 0; i < 4; i++)
         {
-            bool czyZbity = true;
             startPosition = list[x].transform.position;
-            GameObject newPrefab = Instantiate(kolumna, startPosition, rotation);
+            GameObject newPrefab = new GameObject();
+            if (u == 0)
+            {
+                newPrefab = Instantiate(kolumna1, startPosition, rotation);
+                newPrefab.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.Off;
+                newPrefab.transform.GetChild(1).gameObject.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.Off;
+            }
+            else if (u == 1)
+            {
+                newPrefab = Instantiate(kolumna2, startPosition, rotation);
+                newPrefab.transform.GetChild(1).gameObject.GetComponent<SkinnedMeshRenderer>().shadowCastingMode = ShadowCastingMode.Off;
+            }
+            else if (u == 2)
+            {
+                newPrefab = Instantiate(kolumna3, startPosition, rotation);
+                newPrefab.transform.GetChild(1).gameObject.GetComponent<SkinnedMeshRenderer>().shadowCastingMode = ShadowCastingMode.Off;
+            }
+            else
+            {
+                newPrefab = Instantiate(kolumna4, startPosition, rotation);
+                newPrefab.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.Off;
+                newPrefab.transform.GetChild(1).gameObject.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.Off;
+            }
             //newPrefab.tag = kolor.name;
-            newPrefab.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.Off;
-            newPrefab.transform.GetChild(1).gameObject.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.Off;
             CapsuleCollider capsuleCollider = newPrefab.AddComponent<CapsuleCollider>();
             newPrefab.GetComponent<CapsuleCollider>().radius = 4.33f;
             newPrefab.GetComponent<CapsuleCollider>().height = 25.3f;

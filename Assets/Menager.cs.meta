@@ -3,7 +3,19 @@ guid: c4a0a5d914cb3664c8bb193452cde6e6
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - plansza: {instanceID: 0}
+  - move: {instanceID: 0}
+  - kolumna1: {instanceID: 0}
+  - kolumna2: {instanceID: 0}
+  - kolumna3: {instanceID: 0}
+  - kolumna4: {instanceID: 0}
+  - prefab: {instanceID: 0}
+  - pusty: {instanceID: 0}
+  - blue: {instanceID: 0}
+  - red: {instanceID: 0}
+  - yellow: {instanceID: 0}
+  - green: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

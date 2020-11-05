@@ -33,7 +33,23 @@ public class move : MonoBehaviour
 
             if (collider.GetComponent<poruszacz>())
             {
-                GameObject masa = collider.transform.GetChild(0).gameObject;
+                GameObject masa = new GameObject();
+                if (aktualnyPlayer.Kolor.name == "yellow")
+                {
+                    masa = collider.transform.GetChild(0).gameObject;
+                }
+                else if (aktualnyPlayer.Kolor.name == "red")
+                {
+                    masa = collider.transform.GetChild(1).gameObject;
+                }
+                else if (aktualnyPlayer.Kolor.name == "blue")
+                {
+                    masa = collider.transform.GetChild(1).gameObject;
+                }
+                else
+                {
+                    masa = collider.transform.GetChild(0).gameObject;
+                }
                 Material[] materialy = masa.GetComponent<Renderer>().materials;
                 if (materialy[0].name == "swiecak (Instance)")
                 {
@@ -43,10 +59,28 @@ public class move : MonoBehaviour
                     kto = kto % 4;
                     for (int i = 0; i < 4; i++)
                     {
-                        GameObject cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
+                        GameObject cialko = new GameObject();
+                        if (aktualnyPlayer.Kolor.name == "yellow")
+                        {
+                            cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
+                        }
+                        else if (aktualnyPlayer.Kolor.name == "red")
+                        {
+                            cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
+                        }
+                        else if (aktualnyPlayer.Kolor.name == "blue")
+                        {
+                            cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
+                        }
+                        else
+                        {
+                            cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
+                        }
                         Material[] mats = cialko.GetComponent<Renderer>().materials;
-                        mats[0] = glow;
-                        mats[1] = glow;
+                        for (int x = 0; x <mats.Length; x++)
+                        {
+                            mats[x] = glow;
+                        }
                         cialko.GetComponent<Renderer>().materials = mats;
                     }
                 }

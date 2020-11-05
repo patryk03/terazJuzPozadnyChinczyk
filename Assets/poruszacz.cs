@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -53,10 +54,18 @@ public class poruszacz : MonoBehaviour
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    Menager.Ludzik ludzikTeraz = playerDoTestowania.Ludziki[x];
+                    Menager.Ludzik ludzikTeraz = playerDoTestowania.Ludziki[i];
                     if (ludzikTeraz.CzyZbity == false)
                     {
-                        if (ludzikTeraz.Chinczyk.transform.position == transform.position)
+                        double a;
+                        double k;
+                        double l;
+                        double z;
+                        a = Math.Round(ludzikTeraz.Chinczyk.transform.position.x);
+                        k = Math.Round(transform.position.x);
+                        l = Math.Round(ludzikTeraz.Chinczyk.transform.position.z);
+                        z = Math.Round(transform.position.z);
+                        if ((a == k) && (l == z))
                         {
                             ludzikTeraz.Chinczyk.transform.position = playerDoTestowania.ListaMiejsc[ludzikTeraz.Poczatek].transform.position;
                             ludzikTeraz.CzyZbity = true;
@@ -67,10 +76,28 @@ public class poruszacz : MonoBehaviour
         }
         for (int i = 0; i < 4; i++)
         {
-            GameObject cialko = aktualnyPlayer.Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
+            GameObject cialko = new GameObject();
+            if (aktualnyPlayer.Kolor.name == "yellow")
+            {
+                cialko = aktualnyPlayer.Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
+            }
+            else if (aktualnyPlayer.Kolor.name == "red")
+            {
+                cialko = aktualnyPlayer.Ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
+            }
+            else if (aktualnyPlayer.Kolor.name == "blue")
+            {
+                cialko = aktualnyPlayer.Ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
+            }
+            else
+            {
+                cialko = aktualnyPlayer.Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
+            }
             Material[] mats = cialko.GetComponent<Renderer>().materials;
-            mats[0] = zeroCztery;
-            mats[1] = zeroJeden;
+            for (int x = 0; x < mats.Length; x++)
+            {
+                mats[x] = aktualnyPlayer.KoloryLudzikow[x];
+            }
             cialko.GetComponent<Renderer>().materials = mats;
         }
         return transform.position;

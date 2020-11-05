@@ -598,7 +598,10 @@ MonoBehaviour:
   plansza: {fileID: 953815689}
   move: {fileID: 861582146}
   createdObjects: []
-  kolumna: {fileID: 919132149155446097, guid: 1368119441fe9894eb7e4f37beb4f00d, type: 3}
+  kolumna1: {fileID: 919132149155446097, guid: 1368119441fe9894eb7e4f37beb4f00d, type: 3}
+  kolumna2: {fileID: 919132149155446097, guid: afb3928bc24186b488460aa14e3e89ab, type: 3}
+  kolumna3: {fileID: 919132149155446097, guid: daa4b07eb0c0d2c4887a4bf3b17adc1d, type: 3}
+  kolumna4: {fileID: 919132149155446097, guid: 1368119441fe9894eb7e4f37beb4f00d, type: 3}
   prefab: {fileID: 919132149155446097, guid: 6593946cac8aed543b38187f509fe71a, type: 3}
   pusty: {fileID: 122303093}
   blue: {fileID: 2100000, guid: 3596c7eaa64d1db458cea5594be36b61, type: 2}
