@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class poruszacz : MonoBehaviour
 {
+    private GameObject cialko;
     void Start()
     {
 
@@ -14,14 +15,14 @@ public class poruszacz : MonoBehaviour
     {
 
     }
-    public Vector3 poruszanie(Menager.Player aktualnyPlayer, Material zeroCztery, Material zeroJeden, List<Menager.Player> plejerowie)
+    public bool poruszanie(Menager.Player aktualnyPlayer, Material zeroCztery, Material zeroJeden, List<Menager.Player> plejerowie, int randomowo)
     {
-        System.Random rnd = new System.Random();
+        bool isGameOver = false;
         int b = 0;
-        int randomowo = rnd.Next(1, 6);
-        for (int i = 0; i < 4; i++)
+        bool granica = true;
+        for (int i = 0; i < (4 - aktualnyPlayer.IleZniszczonych); i++)
         {
-            if (aktualnyPlayer.Ludziki[i].Chinczyk.transform.position == transform.position)
+            if (aktualnyPlayer.Ludziki[i].Chinczyk == transform.gameObject)
             {
                 b = i;
                 break;
@@ -36,11 +37,35 @@ public class poruszacz : MonoBehaviour
         {
             aktualnyPlayer.Ludziki[b].Liczba = aktualnyPlayer.Ludziki[b].Liczba + randomowo;
         }
+        else if (aktualnyPlayer.Ludziki[b].Liczba + randomowo == 44)
+        {
+            aktualnyPlayer.Ludziki.Remove(aktualnyPlayer.Ludziki[b]);
+            Destroy(gameObject);
+            aktualnyPlayer.IleZniszczonych += 1;
+            if (aktualnyPlayer.IleZniszczonych == 4)
+            {
+                isGameOver = true;
+            }
+            granica = false;
+        }
         else
         {
-            aktualnyPlayer.Ludziki[b].Liczba = aktualnyPlayer.Ludziki[b].Liczba + randomowo - 44;
+            granica = false;
         }
-        transform.position = aktualnyPlayer.ListaMiejsc[aktualnyPlayer.Ludziki[b].Liczba].transform.position;
+        if (granica)
+        {
+            transform.position = aktualnyPlayer.ListaMiejsc[aktualnyPlayer.Ludziki[b].Liczba].transform.position;
+            transform.rotation = aktualnyPlayer.ListaMiejsc[aktualnyPlayer.Ludziki[b].Liczba].transform.rotation;
+            if (aktualnyPlayer.Kolor.name == "green")
+            {
+                transform.Rotate(-90, 90.0f, 0);
+            }
+            else
+            {
+                transform.Rotate(0, 90.0f, 0);
+            }
+        }
+
         float g = transform.position.x;
         float p = transform.position.z;
         float y = transform.position.y;
@@ -52,7 +77,7 @@ public class poruszacz : MonoBehaviour
             Menager.Player playerDoTestowania = plejerowie[x];
             if (playerDoTestowania != aktualnyPlayer)
             {
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < (4-playerDoTestowania.IleZniszczonych); i++)
                 {
                     Menager.Ludzik ludzikTeraz = playerDoTestowania.Ludziki[i];
                     if (ludzikTeraz.CzyZbity == false)
@@ -68,15 +93,16 @@ public class poruszacz : MonoBehaviour
                         if ((a == k) && (l == z))
                         {
                             ludzikTeraz.Chinczyk.transform.position = playerDoTestowania.ListaMiejsc[ludzikTeraz.Poczatek].transform.position;
+                            ludzikTeraz.Chinczyk.transform.rotation = ludzikTeraz.PoczatkowaRotacja;
                             ludzikTeraz.CzyZbity = true;
                         }
                     }
                 }
             }
         }
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < (4 - aktualnyPlayer.IleZniszczonych); i++)
         {
-            GameObject cialko = new GameObject();
+            
             if (aktualnyPlayer.Kolor.name == "yellow")
             {
                 cialko = aktualnyPlayer.Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
@@ -91,7 +117,7 @@ public class poruszacz : MonoBehaviour
             }
             else
             {
-                cialko = aktualnyPlayer.Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
+                cialko = aktualnyPlayer.Ludziki[i].Chinczyk.transform.gameObject;
             }
             Material[] mats = cialko.GetComponent<Renderer>().materials;
             for (int x = 0; x < mats.Length; x++)
@@ -100,6 +126,6 @@ public class poruszacz : MonoBehaviour
             }
             cialko.GetComponent<Renderer>().materials = mats;
         }
-        return transform.position;
+        return isGameOver;
     }
 }
