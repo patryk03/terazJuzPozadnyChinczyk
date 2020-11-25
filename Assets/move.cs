@@ -24,9 +24,12 @@ public class move : MonoBehaviour
     private GameObject cialko;
     private bool isGameOver = false;
     private string wygrany;
+    public bool kostkaJestWTrakcieRzutu;
+    private GameObject drugiCollider;
+    private int number = 0;
+    private GameObject collider;
     void Start()
     {
-
     }
 
     void Update()
@@ -35,12 +38,13 @@ public class move : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                
                 aktualnyPlayer = plejerowie[kto];
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 Physics.Raycast(ray, out hit);
-                GameObject collider = hit.collider.gameObject;
-
+                collider = hit.collider.gameObject;
+                podawacz(collider);
                 if (collider.GetComponent<poruszacz>() && czyGrac == true)
                 {
 
@@ -64,7 +68,7 @@ public class move : MonoBehaviour
                     if (materialy[0].name == "swiecak (Instance)")
                     {
                         isGameOver = collider.GetComponent<poruszacz>().poruszanie(aktualnyPlayer, zeroCztery, zeroJeden, plejerowie, randomowo);
-                        if(isGameOver)
+                        if (isGameOver)
                         {
                             wygrany = aktualnyPlayer.Kolor.name;
                         }
@@ -79,50 +83,57 @@ public class move : MonoBehaviour
                 }
                 else if (collider.GetComponent<kostkoRzucacz>() && czyGrac == false)
                 {
-                    bool jakiekolwiekLudziki = false;
-                    randomowo = collider.GetComponent<kostkoRzucacz>().rzutKostki();
-                    for (int i = 0; i < (4 - aktualnyPlayer.IleZniszczonych); i++)
+                    collider.GetComponent<kostkoRzucacz>().czas = Time.time;
+                    collider.GetComponent<kostkoRzucacz>().kostkaWTrakcieRzutu = true;
+                    number = 1;
+                }
+            }
+            else if (number > 0 && drugiCollider.GetComponent<kostkoRzucacz>().kostkaWTrakcieRzutu == false)
+            {
+                number = 0;
+                bool jakiekolwiekLudziki = false;
+                randomowo = drugiCollider.GetComponent<kostkoRzucacz>().wyjsciowa;
+                for (int i = 0; i < (4 - aktualnyPlayer.IleZniszczonych); i++)
+                {
+                    if ((randomowo == 6) || (aktualnyPlayer.Ludziki[i].CzyZbity == false))
                     {
-                        if ((randomowo == 6) || (aktualnyPlayer.Ludziki[i].CzyZbity == false))
+                        if (aktualnyPlayer.Kolor.name == "yellow")
                         {
-                            if (aktualnyPlayer.Kolor.name == "yellow")
-                            {
-                                cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
-                            }
-                            else if (aktualnyPlayer.Kolor.name == "red")
-                            {
-                                cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
-                            }
-                            else if (aktualnyPlayer.Kolor.name == "blue")
-                            {
-                                cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
-                            }
-                            else
-                            {
-                                cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.gameObject;
-                            }
-                            Material[] mats = cialko.GetComponent<Renderer>().materials;
-                            for (int x = 0; x < mats.Length; x++)
-                            {
-                                mats[x] = glow;
-                            }
-                            cialko.GetComponent<Renderer>().materials = mats;
-                            jakiekolwiekLudziki = true;
+                            cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(0).gameObject;
                         }
+                        else if (aktualnyPlayer.Kolor.name == "red")
+                        {
+                            cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
+                        }
+                        else if (aktualnyPlayer.Kolor.name == "blue")
+                        {
+                            cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.GetChild(1).gameObject;
+                        }
+                        else
+                        {
+                            cialko = plejerowie[kto].Ludziki[i].Chinczyk.transform.gameObject;
+                        }
+                        Material[] mats = cialko.GetComponent<Renderer>().materials;
+                        for (int x = 0; x < mats.Length; x++)
+                        {
+                            mats[x] = glow;
+                        }
+                        cialko.GetComponent<Renderer>().materials = mats;
+                        jakiekolwiekLudziki = true;
                     }
-                    if(jakiekolwiekLudziki)
-                    {
-                        czyGrac = true;
-                    }
-                    else
-                    {
-                        kto++;
-                        kto = kto % 4;
-                        aktualnyPlayer = plejerowie[kto];
-                        Material[] kolorkiWyswietlacza = swiecicielKolorku.GetComponent<Renderer>().materials;
-                        kolorkiWyswietlacza[0] = plejerowie[kto].Kolor;
-                        swiecicielKolorku.GetComponent<Renderer>().materials = kolorkiWyswietlacza;
-                    }
+                }
+                if (jakiekolwiekLudziki)
+                {
+                    czyGrac = true;
+                }
+                else
+                {
+                    kto++;
+                    kto = kto % 4;
+                    aktualnyPlayer = plejerowie[kto];
+                    Material[] kolorkiWyswietlacza = swiecicielKolorku.GetComponent<Renderer>().materials;
+                    kolorkiWyswietlacza[0] = plejerowie[kto].Kolor;
+                    swiecicielKolorku.GetComponent<Renderer>().materials = kolorkiWyswietlacza;
                 }
             }
         }
@@ -140,5 +151,9 @@ public class move : MonoBehaviour
         plejerowie = allPlayers;
         swiecicielKolorku = wyswietlaczKolorku;
         swiecicielKolorku.transform.SetParent(calosc.transform);
+    }
+    public void podawacz(GameObject collider)
+    {
+        drugiCollider = collider;
     }
 }
